@@ -1,1 +1,0 @@
-https://apollo.volvox.tech/#access_token=wbfoyjh1b9sf463tecgwh6dey7bk22&scope=chat%3Aread+chat%3Aedit&token_type=bearer
