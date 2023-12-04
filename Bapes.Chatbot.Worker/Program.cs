@@ -8,8 +8,8 @@ builder.Services.AddHostedService<Worker>();
 builder.Services.AddSingleton<AiBot>();
 
 // Configuration
-builder.Services.Configure<RestrictedPhrases>(
-    builder.Configuration.GetSection(nameof(RestrictedPhrases)));
+builder.Services.Configure<Data>(
+    builder.Configuration.GetSection(nameof(Data)));
 builder.Services.Configure<OpenApiKey>(
     builder.Configuration.GetSection("OpenAi"));
 

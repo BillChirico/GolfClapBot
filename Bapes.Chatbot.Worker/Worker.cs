@@ -11,7 +11,7 @@ using TwitchLib.Communication.Models;
 
 namespace Bapes.ChatBot.Worker;
 
-public class Worker(ILogger<Worker> logger, IOptions<RestrictedPhrases> restrictedPhrases, AiBot bot)
+public class Worker(ILogger<Worker> logger, IOptions<Data> restrictedPhrases, AiBot bot)
     : BackgroundService
 {
     private TwitchClient _client;
@@ -48,10 +48,11 @@ public class Worker(ILogger<Worker> logger, IOptions<RestrictedPhrases> restrict
         if (string.IsNullOrEmpty(e.ChatMessage.Message))
             return;
 
-        var response = await bot.AnalyzeChatMessage(RemoveEmojis(e.ChatMessage), e.ChatMessage.Username);
+        var response = await bot.AnalyzeChatMessage(RemoveEmotes(e.ChatMessage), e.ChatMessage.Username);
 
-        if (restrictedPhrases.Value.Phrases != null && restrictedPhrases.Value.Phrases.Exists(restrictedPhrase =>
-                response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
+        if (restrictedPhrases.Value.RestrictedPhrases != null && restrictedPhrases.Value.RestrictedPhrases.Exists(
+                restrictedPhrase =>
+                    response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
         {
             return;
         }
@@ -108,15 +109,25 @@ public class Worker(ILogger<Worker> logger, IOptions<RestrictedPhrases> restrict
             ?.InformationalVersion;
     }
 
-    private string RemoveEmojis(ChatMessage message)
+    private static string RemoveEmotes(ChatMessage msg)
     {
-        StringBuilder parsed = new(message.Message);
+        StringBuilder parsed = new(msg.Message.Length);
+        StringInfo rawInfo = new(msg.Message);
 
-        foreach (var emote in message.EmoteSet.Emotes.OrderByDescending(x => x.StartIndex))
+        var startIndex = 0;
+        foreach (var emote in msg.EmoteSet.Emotes.OrderBy(x => x.StartIndex))
         {
-            parsed.Remove(emote.StartIndex, emote.EndIndex - emote.StartIndex + 1);
+            parsed.Append(rawInfo.SubstringByTextElements(startIndex, emote.StartIndex - startIndex));
             parsed.Replace("  ", " ");
+
+            startIndex = emote.EndIndex + 1;
         }
+
+        if (startIndex >= rawInfo.LengthInTextElements)
+            return parsed.ToString();
+
+        parsed.Append(rawInfo.SubstringByTextElements(startIndex));
+        parsed.Replace("  ", " ");
 
         return parsed.ToString();
     }
