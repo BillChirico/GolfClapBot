@@ -1,6 +1,6 @@
 ﻿namespace Bapes.Chatbot.Worker;
 
-public class OpenApiKey
+public class OpenAI
 {
     public string? ApiKey { get; set; }
 }

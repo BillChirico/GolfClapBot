@@ -8,7 +8,7 @@ public class AiBot
     private readonly Data _data;
     private readonly OpenAIAPI _openAiClient;
 
-    public AiBot(IOptions<OpenApiKey> apiKey, IOptions<Data> data)
+    public AiBot(IOptions<OpenAI> apiKey, IOptions<Data> data)
     {
         _data = data.Value;
         _openAiClient = new OpenAIAPI(apiKey.Value.ApiKey);

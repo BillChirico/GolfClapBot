@@ -6,38 +6,44 @@ using Microsoft.Extensions.Options;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Clients;
-using TwitchLib.Communication.Models;
 
 namespace Bapes.ChatBot.Worker;
 
-public class Worker(ILogger<Worker> logger, IOptions<Data> restrictedPhrases, AiBot bot)
+public class Worker(ILogger<Worker> logger, IOptions<Data> restrictedPhrases, AiBot bot, ILoggerFactory loggerFactory)
     : BackgroundService
 {
-    private TwitchClient _client;
+    private readonly TwitchClient _client = new();
 
-    private void Client_OnLog(object? sender, OnLogArgs e)
+    private void SendMessage(string message, string username = "")
     {
-        logger.LogInformation("{S}: {BotUsername} - {Data}", e.DateTime.ToString(CultureInfo.InvariantCulture),
-            e.BotUsername, e.Data);
+        logger.LogInformation("Bot is sending message: {Message} in channel {Username}", message, username);
+
+        _client.SendMessage("Bapes", message);
     }
 
-    private void Client_OnConnected(object? sender, OnConnectedArgs e)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var assemblyVersion = assembly.GetName().Version;
+        var credentials = new ConnectionCredentials("GolfClapBot", "token");
 
-        Console.WriteLine($"Connected to {e.AutoJoinChannel}");
-        SendMessage(
-            $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
+        _client.Initialize(credentials, "Bapes");
+
+        _client.OnJoinedChannel += ClientOnOnJoinedChannel;
+        _client.OnMessageReceived += ClientOnOnMessageReceived;
+        _client.OnConnected += ClientOnOnConnected;
+
+        await _client.ConnectAsync();
+
+        logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
     }
 
-    private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
+    private Task ClientOnOnConnected(object? sender, OnConnectedArgs e)
     {
-        logger.LogInformation("Connected to channel [{Channel}]!", e.Channel);
+        logger?.LogInformation("Connected to channel [{Channel}]!", e.AutoJoinChannel);
+
+        return Task.CompletedTask;
     }
 
-    private async void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs e)
+    private async Task ClientOnOnMessageReceived(object? sender, OnMessageReceivedArgs e)
     {
         if (e.ChatMessage.DisplayName == "GolfClapBot")
             return;
@@ -60,49 +66,16 @@ public class Worker(ILogger<Worker> logger, IOptions<Data> restrictedPhrases, Ai
         SendMessage(response, e.ChatMessage.Username);
     }
 
-    private void SendMessage(string message, string username = "")
+    private Task ClientOnOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        logger.LogInformation("Bot is sending message: {Message} in channel {Username}", message, username);
+        Console.WriteLine($"Connected to {e.Channel}");
+        SendMessage(
+            $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
 
-        _client.SendMessage("Bapes", message);
+        return Task.CompletedTask;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            if (logger.IsEnabled(LogLevel.Information))
-            {
-                var credentials = new ConnectionCredentials("GolfClapBot", "7x02rd4r3tnm0k7j2ayiewx1hrchkg");
-
-                var clientOptions = new ClientOptions
-                {
-                    MessagesAllowedInPeriod = 750, ThrottlingPeriod = TimeSpan.FromSeconds(30)
-                };
-
-                var customClient = new WebSocketClient(clientOptions);
-                _client = new TwitchClient();
-                _client = new TwitchClient(customClient);
-                _client.Initialize(credentials, "Bapes");
-
-                _client.OnLog += Client_OnLog;
-                _client.OnJoinedChannel += Client_OnJoinedChannel;
-                _client.OnMessageReceived += Client_OnMessageReceived;
-                _client.OnConnected += Client_OnConnected;
-
-                _client.Connect();
-                _client.Connect();
-
-                logger.LogInformation("Worker running at: {Time}", DateTimeOffset.Now);
-
-                Thread.Sleep(Timeout.Infinite);
-            }
-
-            await Task.Delay(1000, stoppingToken);
-        }
-    }
-
-    private string? GetVersion()
+    private static string? GetVersion()
     {
         return typeof(Worker).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
