@@ -1,6 +1,4 @@
-﻿using Bapes.Chatbot.Worker;
-
-namespace Bapes.ChatBot.Worker;
+﻿namespace Bapes.ChatBot.Worker.Configuration;
 
 public class Settings
 {

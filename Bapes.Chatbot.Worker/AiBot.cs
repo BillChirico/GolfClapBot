@@ -1,4 +1,5 @@
 ﻿using Bapes.ChatBot.Worker;
+using Bapes.ChatBot.Worker.Configuration;
 using Microsoft.Extensions.Options;
 using OpenAI_API;
 using OpenAI_API.Chat;

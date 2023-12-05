@@ -1,5 +1,6 @@
 using Bapes.Chatbot.Worker;
 using Bapes.ChatBot.Worker;
+using Bapes.ChatBot.Worker.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -8,7 +9,7 @@ builder.Services.AddLogging();
 builder.Services.AddLogging(c => c.AddSimpleConsole());
 
 // Services
-builder.Services.AddHostedService<Worker>();
+builder.Services.AddHostedService<TwitchWorker>();
 builder.Services.AddSingleton<AiBot>();
 
 // Configuration

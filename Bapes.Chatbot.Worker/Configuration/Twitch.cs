@@ -1,4 +1,4 @@
-﻿namespace Bapes.ChatBot.Worker;
+﻿namespace Bapes.ChatBot.Worker.Configuration;
 
 public class Twitch
 {

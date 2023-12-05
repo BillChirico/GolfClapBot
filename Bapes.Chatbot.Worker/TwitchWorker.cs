@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using Bapes.Chatbot.Worker;
+using Bapes.ChatBot.Worker.Configuration;
 using Microsoft.Extensions.Options;
 using OpenAI_API.Chat;
 using OpenAI_API.Models;
@@ -13,15 +14,15 @@ using OnConnectedEventArgs = TwitchLib.Client.Events.OnConnectedEventArgs;
 
 namespace Bapes.ChatBot.Worker;
 
-public class Worker : BackgroundService
+public class TwitchWorker : BackgroundService
 {
     private readonly TwitchClient _client;
-    private readonly ILogger<Worker> _logger;
+    private readonly ILogger<TwitchWorker> _logger;
     private readonly AiBot _bot;
     private readonly IOptions<Settings> _settings;
     private readonly Data _data;
 
-    public Worker(ILogger<Worker> logger, ILoggerFactory loggerFactory, AiBot bot, IOptions<Data> data,
+    public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, AiBot bot, IOptions<Data> data,
         IOptions<Settings> settings)
     {
         _logger = logger;
@@ -53,9 +54,9 @@ public class Worker : BackgroundService
         _client.OnMessageReceived += TwitchClientOnMessageReceived;
         _client.OnJoinedChannel += TwitchClientOnJoinedChannel;
 
-        var credentials = new ConnectionCredentials("GolfClapBot", _settings.Value.Twitch.OAuthToken);
+        var credentials = new ConnectionCredentials(_settings.Value.Twitch.BotUser, _settings.Value.Twitch.OAuthToken);
 
-        _client.Initialize(credentials, "Bapes");
+        _client.Initialize(credentials, _settings.Value.Twitch.Channel);
         _client.ConnectAsync();
     }
 
@@ -109,7 +110,7 @@ public class Worker : BackgroundService
 
     private static string? GetVersion()
     {
-        return typeof(Worker).Assembly
+        return typeof(TwitchWorker).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
             ?.InformationalVersion;
     }

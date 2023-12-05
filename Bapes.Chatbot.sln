@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bapes.Chatbot", "Bapes.Chatbot.Worker\Bapes.ChatBot.Worker.csproj", "{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bapes.Chatbot.Worker", "Bapes.Chatbot.Worker\Bapes.ChatBot.Worker.csproj", "{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

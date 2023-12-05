@@ -1,4 +1,4 @@
-﻿namespace Bapes.Chatbot.Worker;
+﻿namespace Bapes.ChatBot.Worker.Configuration;
 
 public class Data
 {
