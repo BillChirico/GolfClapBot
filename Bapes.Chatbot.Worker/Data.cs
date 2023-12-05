@@ -2,7 +2,7 @@
 
 public class Data
 {
-    public List<string>? TrainingData { get; set; }
+    public required List<string>? TrainingData { get; set; }
 
-    public List<string>? RestrictedPhrases { get; set; }
+    public required List<string>? RestrictedPhrases { get; set; }
 }

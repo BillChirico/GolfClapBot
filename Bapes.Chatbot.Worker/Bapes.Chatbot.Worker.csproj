@@ -9,7 +9,7 @@
     <VersionSuffix>alpha</VersionSuffix>
     <NeutralLanguage>en-US</NeutralLanguage>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-    <UserSecretsId>d4a13da1-6c64-4d8d-8796-736e61834e5c</UserSecretsId>
+    <UserSecretsId>4894cb7a-5a69-48a4-ab93-cb4cab630db9</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

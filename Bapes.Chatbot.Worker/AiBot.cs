@@ -1,17 +1,23 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Bapes.ChatBot.Worker;
+using Microsoft.Extensions.Options;
 using OpenAI_API;
+using OpenAI_API.Chat;
+using OpenAI_API.Models;
 
 namespace Bapes.Chatbot.Worker;
 
 public class AiBot
 {
-    private readonly Data _data;
-    private readonly OpenAIAPI _openAiClient;
+    private readonly Settings settings;
+    public readonly OpenAIAPI _openAiClient;
+    private readonly Settings _settings;
+    private static Data _data;
 
-    public AiBot(IOptions<OpenAI> apiKey, IOptions<Data> data)
+    public AiBot(IOptions<Data> data, IOptions<Settings> settings)
     {
+        _settings = settings.Value;
         _data = data.Value;
-        _openAiClient = new OpenAIAPI("key");
+        _openAiClient = new OpenAIAPI(_settings.OpenAi.ApiKey);
     }
 
     public async Task<string> AnalyzeChatMessage(string message, string username)
@@ -30,7 +36,8 @@ public class AiBot
             "We have TikTok @BapesGolfClap, Kick kick.tv/BapesGolfClap, & YouTube @BapesGolfClap");
 
         chat.AppendUserInput("What else can you do?");
-        chat.AppendExampleChatbotOutput("I can answer questionsdd based on the stream,");
+        chat.AppendExampleChatbotOutput(
+            "I can answer question based on the stream, Bapes, and just about anything else you can think of!");
 
         chat.AppendUserInput("What is Kick?");
         chat.AppendExampleChatbotOutput(
@@ -43,6 +50,18 @@ public class AiBot
 
         if (message.Length == 0)
             return string.Empty;
+
+
+        var result = await _openAiClient.Chat.CreateChatCompletionAsync(new ChatRequest
+        {
+            Model = Model.ChatGPTTurbo,
+            Temperature = 0.1,
+            MaxTokens = 50,
+            Messages = new ChatMessage[]
+            {
+                new(ChatMessageRole.User, message)
+            }
+        });
 
         chat.AppendUserInputWithName(username, message);
         return await chat.GetResponseFromChatbotAsync();
