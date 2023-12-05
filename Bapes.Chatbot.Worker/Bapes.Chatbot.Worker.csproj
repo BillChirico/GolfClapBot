@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0"/>
     <PackageReference Include="OpenAI" Version="1.7.2"/>
     <PackageReference Include="TwitchLib" Version="3.5.3"/>
-    <PackageReference Include="TwitchLib.Client" Version="4.0.0-preview-fd131763416cb9f1a31705ca609566d7e7e7fac8"/>
+    <PackageReference Include="TwitchLib.Client" Version="4.0.0-preview-e20160e648c6906e7c2d62344e51c102d6a78340"/>
   </ItemGroup>
 
   <ItemGroup>

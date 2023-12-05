@@ -11,7 +11,7 @@ public class AiBot
     public AiBot(IOptions<OpenAI> apiKey, IOptions<Data> data)
     {
         _data = data.Value;
-        _openAiClient = new OpenAIAPI(apiKey.Value.ApiKey);
+        _openAiClient = new OpenAIAPI("key");
     }
 
     public async Task<string> AnalyzeChatMessage(string message, string username)
