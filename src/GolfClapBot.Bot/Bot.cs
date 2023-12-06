@@ -1,19 +1,17 @@
-﻿using GolfClapBot.Runner.Configuration;
+﻿using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Options;
 using OpenAI_API;
-using OpenAI_API.Chat;
-using OpenAI_API.Models;
 
-namespace GolfClapBot.Runner;
+namespace GolfClapBot.Bot;
 
-public class AiBot
+public class Bot : IBot
 {
     private readonly Settings settings;
     private readonly OpenAIAPI _openAiClient;
     private readonly Settings _settings;
     private static Data _data;
 
-    public AiBot(IOptions<Data> data, IOptions<Settings> settings)
+    public Bot(IOptions<Data> data, IOptions<Settings> settings)
     {
         _settings = settings.Value;
         _data = data.Value;

@@ -1,5 +1,4 @@
-using GolfClapBot.Runner;
-using GolfClapBot.Runner.Configuration;
+using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,11 +10,16 @@ namespace GolfClapBot.Test;
 public class StartupTests
 {
     private readonly ServiceCollection _services = new();
+
     private readonly IConfigurationRoot _configuration = new ConfigurationBuilder()
         .AddInMemoryCollection(new Dictionary<string, string>
         {
-            {"Data:SomeProperty", "Value1"},
-            {"Settings:SomeProperty", "Value2"}
+            {
+                "Data:SomeProperty", "Value1"
+            },
+            {
+                "Settings:SomeProperty", "Value2"
+            }
         }!)
         .Build();
 

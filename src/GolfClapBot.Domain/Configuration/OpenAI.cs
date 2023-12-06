@@ -1,4 +1,4 @@
-﻿namespace GolfClapBot.Runner.Configuration;
+﻿namespace GolfClapBot.Domain.Configuration;
 
 public class OpenAI
 {

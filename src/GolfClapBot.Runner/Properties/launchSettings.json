@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Volvox.Twitch.Responder": {
+    "GolfClapBot.Runner": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {
