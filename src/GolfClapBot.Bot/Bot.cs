@@ -1,17 +1,17 @@
-﻿using Bapes.ChatBot.Worker.Configuration;
+﻿using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Options;
 using OpenAI_API;
 
-namespace Bapes.Chatbot.Worker;
+namespace GolfClapBot.Bot;
 
-public class AiBot
+public class Bot : IBot
 {
     private readonly Settings settings;
-    public readonly OpenAIAPI _openAiClient;
+    private readonly OpenAIAPI _openAiClient;
     private readonly Settings _settings;
     private static Data _data;
 
-    public AiBot(IOptions<Data> data, IOptions<Settings> settings)
+    public Bot(IOptions<Data> data, IOptions<Settings> settings)
     {
         _settings = settings.Value;
         _data = data.Value;

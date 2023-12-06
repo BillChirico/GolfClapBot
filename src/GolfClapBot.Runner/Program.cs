@@ -1,6 +1,6 @@
-using Bapes.Chatbot.Worker;
-using Bapes.ChatBot.Worker;
-using Bapes.ChatBot.Worker.Configuration;
+using GolfClapBot.Bot;
+using GolfClapBot.Domain.Configuration;
+using GolfClapBot.Runner;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddLogging(c => c.AddSimpleConsole());
 
 // Services
 builder.Services.AddHostedService<TwitchWorker>();
-builder.Services.AddSingleton<AiBot>();
+builder.Services.AddSingleton<IBot, Bot>();
 
 // Configuration
 builder.Services.Configure<Data>(

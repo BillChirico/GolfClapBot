@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text;
-using Bapes.Chatbot.Worker;
-using Bapes.ChatBot.Worker.Configuration;
+using GolfClapBot.Bot;
+using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Options;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -10,17 +10,17 @@ using TwitchLib.Communication.Events;
 using ChatMessage = TwitchLib.Client.Models.ChatMessage;
 using OnConnectedEventArgs = TwitchLib.Client.Events.OnConnectedEventArgs;
 
-namespace Bapes.ChatBot.Worker;
+namespace GolfClapBot.Runner;
 
 public class TwitchWorker : BackgroundService
 {
     private readonly TwitchClient _client;
     private readonly ILogger<TwitchWorker> _logger;
-    private readonly AiBot _bot;
+    private readonly IBot _bot;
     private readonly IOptions<Settings> _settings;
     private readonly Data _data;
 
-    public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, AiBot bot, IOptions<Data> data,
+    public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, IBot bot, IOptions<Data> data,
         IOptions<Settings> settings)
     {
         _logger = logger;
@@ -64,7 +64,6 @@ public class TwitchWorker : BackgroundService
 
     private Task TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        Console.WriteLine($"Connected to {e.Channel}");
         return SendMessage(
             $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
     }
@@ -97,7 +96,7 @@ public class TwitchWorker : BackgroundService
             ?.InformationalVersion;
     }
 
-    private static string RemoveEmotes(ChatMessage message)
+    public static string RemoveEmotes(ChatMessage message)
     {
         StringBuilder parsed = new(message.Message);
 
