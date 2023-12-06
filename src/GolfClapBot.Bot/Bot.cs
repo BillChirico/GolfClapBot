@@ -6,16 +6,13 @@ namespace GolfClapBot.Bot;
 
 public class Bot : IBot
 {
-    private readonly Settings settings;
     private readonly OpenAIAPI _openAiClient;
-    private readonly Settings _settings;
     private static Data _data;
 
     public Bot(IOptions<Data> data, IOptions<Settings> settings)
     {
-        _settings = settings.Value;
         _data = data.Value;
-        _openAiClient = new OpenAIAPI(_settings.OpenAi.ApiKey);
+        _openAiClient = new OpenAIAPI(settings.Value.OpenAi.ApiKey);
     }
 
     public async Task<string> AnalyzeChatMessage(string message, string username)
@@ -26,22 +23,6 @@ public class Bot : IBot
 
         if (message.Length == 0)
             return string.Empty;
-
-        // var model = new Model("gpt-3.5-turbo-1106")
-        // {
-        //     ModelID = "ft:gpt-3.5-turbo-1106:volvox::8SYpeH7J"
-        // };
-        //
-        // var result = await _openAiClient.Chat.CreateChatCompletionAsync(new ChatRequest
-        // {
-        //     Model = model,
-        //     Temperature = 0.5,
-        //     MaxTokens = 250,
-        //     Messages = new[]
-        //     {
-        //         new ChatMessage(ChatMessageRole.User, message)
-        //     }
-        // });
 
         chat.AppendUserInputWithName(username, message);
         return await chat.GetResponseFromChatbotAsync();
