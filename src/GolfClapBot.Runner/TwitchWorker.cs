@@ -17,7 +17,6 @@ public class TwitchWorker : BackgroundService
     private readonly TwitchClient _client;
     private readonly ILogger<TwitchWorker> _logger;
     private readonly IBot _bot;
-    private readonly IOptions<Settings> _settings;
     private readonly Data _data;
 
     public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, IBot bot, IOptions<Data> data,
@@ -25,7 +24,6 @@ public class TwitchWorker : BackgroundService
     {
         _logger = logger;
         _bot = bot;
-        _settings = settings;
         _data = data.Value;
         _client = new TwitchClient(loggerFactory: loggerFactory);
 
@@ -34,9 +32,9 @@ public class TwitchWorker : BackgroundService
         _client.OnMessageReceived += TwitchClientOnMessageReceived;
         _client.OnJoinedChannel += TwitchClientOnJoinedChannel;
 
-        var credentials = new ConnectionCredentials(_settings.Value.Twitch.BotUser, _settings.Value.Twitch.OAuthToken);
+        var credentials = new ConnectionCredentials(settings.Value.Twitch.BotUser, settings.Value.Twitch.OAuthToken);
 
-        _client.Initialize(credentials, _settings.Value.Twitch.Channel);
+        _client.Initialize(credentials, settings.Value.Twitch.Channel);
         _client.ConnectAsync();
     }
 
