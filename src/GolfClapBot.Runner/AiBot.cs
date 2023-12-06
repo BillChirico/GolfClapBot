@@ -1,13 +1,15 @@
-﻿using Bapes.ChatBot.Worker.Configuration;
+﻿using GolfClapBot.Runner.Configuration;
 using Microsoft.Extensions.Options;
 using OpenAI_API;
+using OpenAI_API.Chat;
+using OpenAI_API.Models;
 
-namespace Bapes.Chatbot.Worker;
+namespace GolfClapBot.Runner;
 
 public class AiBot
 {
     private readonly Settings settings;
-    public readonly OpenAIAPI _openAiClient;
+    private readonly OpenAIAPI _openAiClient;
     private readonly Settings _settings;
     private static Data _data;
 

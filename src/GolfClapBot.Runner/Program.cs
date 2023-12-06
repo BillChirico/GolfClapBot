@@ -1,6 +1,5 @@
-using Bapes.Chatbot.Worker;
-using Bapes.ChatBot.Worker;
-using Bapes.ChatBot.Worker.Configuration;
+using GolfClapBot.Runner;
+using GolfClapBot.Runner.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
 

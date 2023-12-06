@@ -1,4 +1,4 @@
-﻿namespace Bapes.ChatBot.Worker.Configuration;
+﻿namespace GolfClapBot.Runner.Configuration;
 
 public class Twitch
 {

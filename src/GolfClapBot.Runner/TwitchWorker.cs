@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text;
-using Bapes.Chatbot.Worker;
-using Bapes.ChatBot.Worker.Configuration;
+using GolfClapBot.Runner.Configuration;
 using Microsoft.Extensions.Options;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -10,7 +9,7 @@ using TwitchLib.Communication.Events;
 using ChatMessage = TwitchLib.Client.Models.ChatMessage;
 using OnConnectedEventArgs = TwitchLib.Client.Events.OnConnectedEventArgs;
 
-namespace Bapes.ChatBot.Worker;
+namespace GolfClapBot.Runner;
 
 public class TwitchWorker : BackgroundService
 {
