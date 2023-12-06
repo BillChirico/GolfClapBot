@@ -2,5 +2,7 @@
 
 public class OpenAI
 {
-    public string? ApiKey { get; set; }
+    public required string ApiKey { get; set; }
+
+    public required string Model { get; set; }
 }

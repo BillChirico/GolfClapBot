@@ -3,8 +3,6 @@ using System.Text;
 using Bapes.Chatbot.Worker;
 using Bapes.ChatBot.Worker.Configuration;
 using Microsoft.Extensions.Options;
-using OpenAI_API.Chat;
-using OpenAI_API.Models;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -29,24 +27,6 @@ public class TwitchWorker : BackgroundService
         _bot = bot;
         _settings = settings;
         _data = data.Value;
-        var model = new Model("ft:gpt-3.5-turbo-1106:volvox::8SFiL3od");
-        model.ModelID = "ft:gpt-3.5-turbo-1106:volvox::8SFiL3od";
-        var modelDetails = model.RetrieveModelDetailsAsync(_bot._openAiClient).Result;
-
-        var result = _bot._openAiClient.Chat.CreateChatCompletionAsync(new ChatRequest
-        {
-            Model = model,
-            Temperature = 0.1,
-            MaxTokens = 50,
-            Messages = new OpenAI_API.Chat.ChatMessage[]
-            {
-                new(ChatMessageRole.User, "Hello, how are you?"),
-                new(ChatMessageRole.User, "I am doing great!"),
-                new(ChatMessageRole.User, "What are his socials?")
-            }
-        }).Result;
-
-
         _client = new TwitchClient(loggerFactory: loggerFactory);
 
         _client.OnConnected += TwitchClientOnConnected;
@@ -68,7 +48,9 @@ public class TwitchWorker : BackgroundService
         if (string.IsNullOrEmpty(e.ChatMessage.Message))
             return;
 
-        var response = await _bot.AnalyzeChatMessage(RemoveEmotes(e.ChatMessage), e.ChatMessage.Username);
+        var b = RemoveEmotes(e.ChatMessage);
+
+        var response = await _bot.AnalyzeChatMessage(e.ChatMessage.Message, e.ChatMessage.Username);
 
         if (_data.RestrictedPhrases != null && _data.RestrictedPhrases.Exists(
                 restrictedPhrase =>

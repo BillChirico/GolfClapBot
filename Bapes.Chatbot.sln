@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bapes.Chatbot.Worker", "Bapes.Chatbot.Worker\Bapes.ChatBot.Worker.csproj", "{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bapes.Chatbot.Worker", "Bapes.Chatbot.Worker\Bapes.Chatbot.Worker.csproj", "{2F84DF31-C8C8-48BA-8C76-FE62CF2BCF78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +12,9 @@ Global
 		{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D379A3B0-EC9B-416F-A7E8-745B51DB5BC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F84DF31-C8C8-48BA-8C76-FE62CF2BCF78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F84DF31-C8C8-48BA-8C76-FE62CF2BCF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F84DF31-C8C8-48BA-8C76-FE62CF2BCF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F84DF31-C8C8-48BA-8C76-FE62CF2BCF78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
