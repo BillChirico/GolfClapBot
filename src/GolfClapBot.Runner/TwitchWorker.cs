@@ -53,6 +53,13 @@ public class TwitchWorker : BackgroundService
         if (string.IsNullOrEmpty(m.Trim()))
             return;
 
+        if (_bot.RepliedMessages.Contains(m))
+        {
+            _logger.LogInformation("Bot has already replied to message: {Message}", m);
+
+            return;
+        }
+
         var response = await _bot.AnalyzeChatMessage(m, e.ChatMessage.Username);
 
         if (_data.RestrictedPhrases != null && _data.RestrictedPhrases.Exists(
@@ -86,7 +93,7 @@ public class TwitchWorker : BackgroundService
 
     private Task SendMessage(string message, string username = "")
     {
-        _logger.LogInformation("Bot is sending message: {Message} in channel {Username}", message, username);
+        _logger.LogInformation("Bot is sending message: {Message} to user {Username}", message, username);
 
         return _client.SendMessageAsync("Bapes", message);
     }
