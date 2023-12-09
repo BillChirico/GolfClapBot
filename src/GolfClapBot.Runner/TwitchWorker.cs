@@ -48,9 +48,12 @@ public class TwitchWorker : BackgroundService
         if (string.IsNullOrEmpty(e.ChatMessage.Message))
             return;
 
-        var b = RemoveEmotes(e.ChatMessage);
+        var m = RemoveEmotes(e.ChatMessage);
 
-        var response = await _bot.AnalyzeChatMessage(e.ChatMessage.Message, e.ChatMessage.Username);
+        if (string.IsNullOrEmpty(m.Trim()))
+            return;
+
+        var response = await _bot.AnalyzeChatMessage(m, e.ChatMessage.Username);
 
         if (_data.RestrictedPhrases != null && _data.RestrictedPhrases.Exists(
                 restrictedPhrase =>
@@ -62,10 +65,12 @@ public class TwitchWorker : BackgroundService
         await SendMessage(response, e.ChatMessage.Username);
     }
 
-    private Task TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
+    private async Task<Task> TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        return SendMessage(
-            $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
+        // return SendMessage(
+        //     $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
+
+        return SendMessage(await _bot.GetWelcomeMessage(GetVersion()));
     }
 
     private Task TwitchClientOnDisconnected(object? sender, OnDisconnectedEventArgs e)

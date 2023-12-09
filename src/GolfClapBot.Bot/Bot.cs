@@ -46,4 +46,14 @@ public class Bot : IBot
         chat.AppendUserInputWithName(username, message);
         return await chat.GetResponseFromChatbotAsync();
     }
+
+    public Task<string> GetWelcomeMessage(string? version = "1.0.0")
+    {
+        var chat = _openAiClient.Chat.CreateConversation();
+
+        chat.AppendUserInputWithName("Bapes",
+            $"Create a message welcoming people to Bapes Twitch Stream. You are GolfClapBot a Twitch Chat Bot for Bapes. Be friendly and informative. You are on version {version} of GolfClapBot. Do not go over 250 characters.+");
+
+        return chat.GetResponseFromChatbotAsync();
+    }
 }
