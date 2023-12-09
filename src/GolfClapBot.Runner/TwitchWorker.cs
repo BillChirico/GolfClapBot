@@ -67,9 +67,6 @@ public class TwitchWorker : BackgroundService
 
     private async Task<Task> TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        // return SendMessage(
-        //     $"Hello! I'm GolfClapBot, the AI chat bot developed by Bapes. If you're interested in learning more about it, please feel free to message him! v{GetVersion()}");
-
         return SendMessage(await _bot.GetWelcomeMessage(GetVersion()));
     }
 
