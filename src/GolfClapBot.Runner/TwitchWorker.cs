@@ -3,7 +3,7 @@ using System.Text;
 using GolfClapBot.Bot;
 using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Options;
-using TwitchLib.Api;
+using TwitchLib.Api.Interfaces;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -19,14 +19,16 @@ public class TwitchWorker : BackgroundService
     private readonly ILogger<TwitchWorker> _logger;
     private readonly IBot _bot;
     private readonly IOptions<Settings> _settings;
+    private readonly ITwitchAPI _twitchApi;
     private readonly Data _data;
 
     public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, IBot bot, IOptions<Data> data,
-        IOptions<Settings> settings)
+        IOptions<Settings> settings, ITwitchAPI twitchApi)
     {
         _logger = logger;
         _bot = bot;
         _settings = settings;
+        _twitchApi = twitchApi;
         _data = data.Value;
         _client = new TwitchClient(loggerFactory: loggerFactory);
 
@@ -136,15 +138,7 @@ public class TwitchWorker : BackgroundService
         {
             _logger.LogWarning("Bot is deleting message: {MessageId}", message.Id);
 
-            var twitchApi = new TwitchAPI
-            {
-                Settings =
-                {
-                    ClientId = _settings.Value.Twitch.ClientId, AccessToken = _settings.Value.Twitch.OAuthToken
-                }
-            };
-
-            await twitchApi.Helix.Moderation.DeleteChatMessagesAsync(message.RoomId, "425816290", message.Id,
+            await _twitchApi.Helix.Moderation.DeleteChatMessagesAsync(message.RoomId, "425816290", message.Id,
                 _settings.Value.Twitch.OAuthToken);
         }
         catch (Exception exception)
