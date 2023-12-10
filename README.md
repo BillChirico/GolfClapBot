@@ -1,2 +1,2 @@
-# Bapes-Chatbot
-Chatbot that uses OpenAI to respond to Twitch messages.
+# Bapes-Chatbot [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BillChirico_GolfClapBot&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=BillChirico_GolfClapBot)  [![codecov](https://codecov.io/gh/BillChirico/GolfClapBot/graph/badge.svg?token=KOXHEPIEBU)](https://codecov.io/gh/BillChirico/GolfClapBot)
+Chatbot that uses OpenAI to respond to Twitch messages with manual training.
