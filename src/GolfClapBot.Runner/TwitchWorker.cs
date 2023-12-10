@@ -3,6 +3,7 @@ using System.Text;
 using GolfClapBot.Bot;
 using GolfClapBot.Domain.Configuration;
 using Microsoft.Extensions.Options;
+using TwitchLib.Api;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Models;
@@ -42,34 +43,45 @@ public class TwitchWorker : BackgroundService
 
     private async Task TwitchClientOnMessageReceived(object? sender, OnMessageReceivedArgs e)
     {
-        if (e.ChatMessage.DisplayName == "GolfClapBot")
-            return;
-
-        if (string.IsNullOrEmpty(e.ChatMessage.Message))
-            return;
-
-        var m = RemoveEmotes(e.ChatMessage);
-
-        if (string.IsNullOrEmpty(m.Trim()))
-            return;
-
-        if (_bot.RepliedMessages.Contains(m))
+        try
         {
-            _logger.LogInformation("Bot has already replied to message: {Message}", m);
+            _logger.LogInformation("Bot received message: {Message}", e.ChatMessage.Message);
 
-            return;
+            if (e.ChatMessage.DisplayName == "GolfClapBot")
+                return;
+
+            if (string.IsNullOrEmpty(e.ChatMessage.Message))
+                return;
+
+            var m = RemoveEmotes(e.ChatMessage);
+
+            if (string.IsNullOrEmpty(m.Trim()))
+                return;
+
+            if (_bot.RepliedMessages.Contains(m))
+            {
+                _logger.LogInformation("Bot has already replied to message: {Message}", m);
+
+                await DeleteMessage(e.ChatMessage);
+
+                return;
+            }
+
+            var response = await _bot.AnalyzeChatMessage(m, e.ChatMessage.Username);
+
+            if (_data.RestrictedPhrases != null && _data.RestrictedPhrases.Exists(
+                    restrictedPhrase =>
+                        response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return;
+            }
+
+            await SendMessage(response, e.ChatMessage.Username);
         }
-
-        var response = await _bot.AnalyzeChatMessage(m, e.ChatMessage.Username);
-
-        if (_data.RestrictedPhrases != null && _data.RestrictedPhrases.Exists(
-                restrictedPhrase =>
-                    response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
+        catch (Exception exception)
         {
-            return;
+            _logger.LogError("Error processing message: {Error}", exception.Message);
         }
-
-        await SendMessage(response, e.ChatMessage.Username);
     }
 
     private async Task<Task> TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
@@ -93,7 +105,7 @@ public class TwitchWorker : BackgroundService
 
     private Task SendMessage(string message, string username = "")
     {
-        _logger.LogInformation("Bot is sending message: {Message} to user {Username}", message, username);
+        _logger.LogInformation("Bot is sending message: {Message} User: [{Username}]", message, username);
 
         return _client.SendMessageAsync("Bapes", message);
     }
@@ -118,7 +130,30 @@ public class TwitchWorker : BackgroundService
         return parsed.ToString();
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    private async Task DeleteMessage(ChatMessage message)
+    {
+        try
+        {
+            _logger.LogWarning("Bot is deleting message: {MessageId}", message.Id);
+
+            var twitchApi = new TwitchAPI
+            {
+                Settings =
+                {
+                    ClientId = _settings.Value.Twitch.ClientId, AccessToken = _settings.Value.Twitch.OAuthToken
+                }
+            };
+
+            await twitchApi.Helix.Moderation.DeleteChatMessagesAsync(message.RoomId, "425816290", message.Id,
+                _settings.Value.Twitch.OAuthToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError("Error deleting message: {Error}", exception.Message);
+        }
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stnoppingToken)
     {
         return Task.CompletedTask;
     }

@@ -7,4 +7,6 @@ public class Twitch
     public required string BotUser { get; set; }
 
     public required string OAuthToken { get; set; }
+
+    public required string ClientId { get; set; }
 }
