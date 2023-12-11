@@ -1,6 +1,6 @@
 ﻿namespace GolfClapBot.Domain.Configuration;
 
-public class Twitch
+public class TwitchSettings
 {
     public required string Channel { get; set; }
 

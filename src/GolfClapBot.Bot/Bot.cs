@@ -13,7 +13,7 @@ public class Bot : IBot
     public Bot(IOptions<Data> data, IOptions<Settings> settings)
     {
         _data = data.Value;
-        _openAiClient = new OpenAIAPI(settings.Value.OpenAi.ApiKey);
+        _openAiClient = new OpenAIAPI(settings.Value.OpenAiSettings.ApiKey);
     }
 
     /// <summary>

@@ -2,7 +2,7 @@
 
 public class Settings
 {
-    public required Twitch Twitch { get; set; }
+    public required TwitchSettings TwitchSettings { get; set; }
 
-    public required OpenAI OpenAi { get; set; }
+    public required OpenAISettings OpenAiSettings { get; set; }
 }

@@ -17,11 +17,11 @@ public class BotTests
         };
         var expectedSettings = new Settings
         {
-            OpenAi = new OpenAI
+            OpenAiSettings = new OpenAISettings
             {
                 ApiKey = "test-key", Model = null
             },
-            Twitch = null
+            TwitchSettings = null
         };
         mockData.Setup(m => m.Value).Returns(expectedData);
         mockSettings.Setup(m => m.Value).Returns(expectedSettings);

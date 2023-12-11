@@ -38,9 +38,10 @@ public class TwitchWorker : BackgroundService
         _client.OnMessageReceived += TwitchClientOnMessageReceived;
         _client.OnJoinedChannel += TwitchClientOnJoinedChannel;
 
-        var credentials = new ConnectionCredentials(_settings.Value.Twitch.BotUser, _settings.Value.Twitch.OAuthToken);
+        var credentials = new ConnectionCredentials(_settings.Value.TwitchSettings.BotUser,
+            _settings.Value.TwitchSettings.OAuthToken);
 
-        _client.Initialize(credentials, _settings.Value.Twitch.Channel);
+        _client.Initialize(credentials, _settings.Value.TwitchSettings.Channel);
         _client.ConnectAsync();
     }
 
@@ -184,14 +185,14 @@ public class TwitchWorker : BackgroundService
     /// </summary>
     /// <param name="message">The chat message to be deleted.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task DeleteMessage(ChatMessage message)
+    public async Task DeleteMessage(ChatMessage message)
     {
         try
         {
             _logger.LogWarning("Bot is deleting message: {MessageId}", message.Id);
 
             await _twitchApi.Helix.Moderation.DeleteChatMessagesAsync(message.RoomId, "425816290", message.Id,
-                _settings.Value.Twitch.OAuthToken);
+                _settings.Value.TwitchSettings.OAuthToken);
         }
         catch (Exception exception)
         {

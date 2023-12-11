@@ -1,21 +1,18 @@
-FROM mcr.microsoft.com/dotnet/runtime:8.0-bookworm-slim AS base
-USER $APP_UID
+# Stage 1: Build the application
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-bookworm-slim AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["GolfClapBot/GolfClapBot.Runner.csproj", "GolfClapBot/"]
-RUN dotnet restore "GolfClapBot/GolfClapBot.Runner.csproj"
-COPY . .
-WORKDIR "/src/Volvox.Twitch.Responder"
-RUN dotnet build "GolfClapBot.Runner.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Copy csproj and restore as distinct layers
+COPY src/GolfClapBot.Runner/*.csproj ./src/GolfClapBot.Runner/
+RUN dotnet restore src/GolfClapBot.Runner/GolfClapBot.Runner.csproj
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "GolfClapBot.Runner.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Copy everything else and build
+COPY src/GolfClapBot.Runner/ ./src/GolfClapBot.Runner/
+WORKDIR /app/src/GolfClapBot.Runner
+RUN dotnet build -c Release -o out
 
-FROM base AS final
+# Stage 2: Run the application
+FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "GolfClapBot.dll"]
+COPY --from=build-env /app/src/GolfClapBot.Runner/out .
+ENTRYPOINT ["dotnet", "GolfClapBot.Runner.dll"]

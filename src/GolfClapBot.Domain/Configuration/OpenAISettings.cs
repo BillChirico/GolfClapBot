@@ -1,6 +1,6 @@
 ﻿namespace GolfClapBot.Domain.Configuration;
 
-public class OpenAI
+public class OpenAISettings
 {
     public required string ApiKey { get; set; }
 
