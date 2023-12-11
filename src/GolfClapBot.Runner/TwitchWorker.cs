@@ -81,10 +81,16 @@ public class TwitchWorker : BackgroundService
                 return;
             }
 
-            if (_bot.RepliedMessages.Contains(m) && _sentMessages.Find(message => message.Message == m)?.TmiSent >
+            var sentDateTime = _sentMessages.Find(message => message.Message == m)?.TmiSent;
+
+            if (_bot.RepliedMessages.Contains(m) && sentDateTime >
                 DateTime.UtcNow.AddMinutes(-5))
             {
-                _logger.LogInformation("Bot has already replied to the same message within five minutes: {Message}", m);
+                var timeRemaining = sentDateTime.Value.AddMinutes(5) - DateTime.UtcNow;
+
+                _logger.LogInformation(
+                    "Bot has already replied to the same message within five minutes ({AddMinutes}): {M}",
+                    timeRemaining, m);
 
                 await DeleteMessage(e.ChatMessage);
 
@@ -97,7 +103,7 @@ public class TwitchWorker : BackgroundService
                     restrictedPhrase =>
                         response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
             {
-                _logger.LogInformation("Bot is deleting message: {Message}", m);
+                _logger.LogInformation("Bot is ignoring message containing restricted phrase: {Message}", m);
 
                 return;
             }
