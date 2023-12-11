@@ -21,6 +21,7 @@ public class TwitchWorker : BackgroundService
     private readonly IOptions<Settings> _settings;
     private readonly ITwitchAPI _twitchApi;
     private readonly Data _data;
+    private readonly List<ChatMessage> _sentMessages = [];
 
     public TwitchWorker(ILogger<TwitchWorker> logger, ILoggerFactory loggerFactory, IBot bot, IOptions<Data> data,
         IOptions<Settings> settings, ITwitchAPI twitchApi)
@@ -43,6 +44,13 @@ public class TwitchWorker : BackgroundService
         _client.ConnectAsync();
     }
 
+    /// <summary>
+    ///     Event handler for the Twitch client's OnMessageReceived event.
+    ///     Processes received chat messages and performs necessary actions.
+    /// </summary>
+    /// <param name="sender">The object that raised the event.</param>
+    /// <param name="e">An instance of the OnMessageReceivedArgs class containing the received message.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     private async Task TwitchClientOnMessageReceived(object? sender, OnMessageReceivedArgs e)
     {
         try
@@ -50,15 +58,28 @@ public class TwitchWorker : BackgroundService
             _logger.LogInformation("Bot received message: {Message}", e.ChatMessage.Message);
 
             if (e.ChatMessage.DisplayName == "GolfClapBot")
-                return;
+            {
+                _logger.LogInformation("Bot is ignoring message from itself");
 
-            if (string.IsNullOrEmpty(e.ChatMessage.Message))
                 return;
+            }
 
+            // Remove emotes from message
             var m = RemoveEmotes(e.ChatMessage);
 
             if (string.IsNullOrEmpty(m.Trim()))
+            {
+                _logger.LogInformation("Bot is ignoring empty message: {Message}", m);
+
                 return;
+            }
+
+            if (_sentMessages.Exists(message => message.TmiSent > DateTime.UtcNow.AddSeconds(-5)))
+            {
+                _logger.LogInformation("Bot has already sent a message in the last 5 seconds");
+
+                return;
+            }
 
             if (_bot.RepliedMessages.Contains(m))
             {
@@ -75,8 +96,12 @@ public class TwitchWorker : BackgroundService
                     restrictedPhrase =>
                         response.Contains(restrictedPhrase.ToLower(), StringComparison.InvariantCultureIgnoreCase)))
             {
+                _logger.LogInformation("Bot is deleting message: {Message}", m);
+
                 return;
             }
+
+            _sentMessages.Add(e.ChatMessage);
 
             await SendMessage(response, e.ChatMessage.Username);
         }
@@ -88,6 +113,8 @@ public class TwitchWorker : BackgroundService
 
     private async Task<Task> TwitchClientOnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
+        _logger.LogInformation("Bot joined channel: {Channel}", e.Channel);
+
         return SendMessage(await _bot.GetWelcomeMessage(GetVersion()));
     }
 
@@ -112,6 +139,14 @@ public class TwitchWorker : BackgroundService
         return _client.SendMessageAsync("Bapes", message);
     }
 
+    /// <summary>
+    ///     Retrieves the version of the TwitchWorker assembly.
+    /// </summary>
+    /// <typeparam name="T">The type of the assembly.</typeparam>
+    /// <returns>
+    ///     The version of the TwitchWorker assembly, represented as a string, or null if the version information is not
+    ///     available.
+    /// </returns>
     private static string? GetVersion()
     {
         return typeof(TwitchWorker).Assembly
@@ -119,6 +154,11 @@ public class TwitchWorker : BackgroundService
             ?.InformationalVersion;
     }
 
+    /// <summary>
+    ///     Removes emotes from the given chat message.
+    /// </summary>
+    /// <param name="message">The chat message containing the emotes.</param>
+    /// <returns>The chat message with emotes removed.</returns>
     public static string RemoveEmotes(ChatMessage message)
     {
         StringBuilder parsed = new(message.Message);
@@ -132,6 +172,11 @@ public class TwitchWorker : BackgroundService
         return parsed.ToString();
     }
 
+    /// <summary>
+    ///     Deletes a chat message.
+    /// </summary>
+    /// <param name="message">The chat message to be deleted.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     private async Task DeleteMessage(ChatMessage message)
     {
         try
