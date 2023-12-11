@@ -81,9 +81,10 @@ public class TwitchWorker : BackgroundService
                 return;
             }
 
-            if (_bot.RepliedMessages.Contains(m))
+            if (_bot.RepliedMessages.Contains(m) && _sentMessages.Find(message => message.Message == m)?.TmiSent >
+                DateTime.UtcNow.AddMinutes(-5))
             {
-                _logger.LogInformation("Bot has already replied to message: {Message}", m);
+                _logger.LogInformation("Bot has already replied to the same message within five minutes: {Message}", m);
 
                 await DeleteMessage(e.ChatMessage);
 
@@ -159,7 +160,7 @@ public class TwitchWorker : BackgroundService
     /// </summary>
     /// <param name="message">The chat message containing the emotes.</param>
     /// <returns>The chat message with emotes removed.</returns>
-    public static string RemoveEmotes(ChatMessage message)
+    private static string RemoveEmotes(ChatMessage message)
     {
         StringBuilder parsed = new(message.Message);
 
