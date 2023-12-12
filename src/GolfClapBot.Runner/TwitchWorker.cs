@@ -75,7 +75,8 @@ public class TwitchWorker : BackgroundService
                 return;
             }
 
-            if (_sentMessages.Exists(message => message.TmiSent > DateTime.UtcNow.AddSeconds(-5)))
+            if (_sentMessages.Exists(message =>
+                    message.TmiSent > DateTime.UtcNow.AddSeconds(-new Random().Next(8, 12))))
             {
                 _logger.LogInformation("Bot has already sent a message in the last 5 seconds");
 
