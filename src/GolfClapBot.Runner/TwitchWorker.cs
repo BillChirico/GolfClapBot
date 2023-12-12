@@ -185,7 +185,7 @@ public class TwitchWorker : BackgroundService
     /// </summary>
     /// <param name="message">The chat message to be deleted.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    public async Task DeleteMessage(ChatMessage message)
+    private async Task DeleteMessage(ChatMessage message)
     {
         try
         {
