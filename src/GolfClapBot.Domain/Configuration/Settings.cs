@@ -4,5 +4,5 @@ public class Settings
 {
     public required TwitchSettings TwitchSettings { get; set; }
 
-    public required OpenAISettings OpenAiSettings { get; set; }
+    public required OpenAiSettings OpenAiSettings { get; set; }
 }

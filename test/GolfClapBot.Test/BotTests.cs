@@ -17,7 +17,7 @@ public class BotTests
         };
         var expectedSettings = new Settings
         {
-            OpenAiSettings = new OpenAISettings
+            OpenAiSettings = new OpenAiSettings
             {
                 ApiKey = "test-key", Model = null
             },

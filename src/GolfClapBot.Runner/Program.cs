@@ -14,13 +14,21 @@ builder.Services.AddSingleton<ITwitchAPI, TwitchAPI>(x => new TwitchAPI
 {
     Settings =
     {
-        AccessToken = builder.Configuration["Settings:Twitch:OAuthToken"],
-        ClientId = builder.Configuration["Settings:Twitch:ClientId"]
+        AccessToken = builder.Configuration["Settings:TwitchSettings:OAuthToken"],
+        ClientId = builder.Configuration["Settings:TwitchSettings:ClientId"]
     }
 });
 
 // Logging
+// Need to clear the providers added by the HostBuilder
+builder.Logging.ClearProviders();
+
 builder.Logging.AddSerilog(dispose: true).AddConfiguration(builder.Configuration);
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog(dispose: true);
+});
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)

@@ -155,7 +155,7 @@ public class TwitchWorker : BackgroundService
     ///     The version of the TwitchWorker assembly, represented as a string, or null if the version information is not
     ///     available.
     /// </returns>
-    private static string? GetVersion()
+    public static string? GetVersion()
     {
         return typeof(TwitchWorker).Assembly
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
