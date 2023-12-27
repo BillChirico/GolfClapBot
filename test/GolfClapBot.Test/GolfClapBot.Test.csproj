@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
     <PackageReference Include="TwitchLib" Version="3.5.3"/>
-    <PackageReference Include="TwitchLib.Client" Version="4.0.0-preview-e20160e648c6906e7c2d62344e51c102d6a78340"/>
+    <PackageReference Include="TwitchLib.Client" Version="4.0.0-preview-fd131763416cb9f1a31705ca609566d7e7e7fac8"/>
     <PackageReference Include="Moq" Version="4.20.70"/>
     <PackageReference Include="xunit" Version="2.4.2"/>
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6">
