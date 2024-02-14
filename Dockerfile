@@ -1,5 +1,5 @@
 # Use the .NET SDK image to build the project
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:8.0.101 AS build-env
 WORKDIR /app
 
 # Copy csproj files and restore as distinct layers
