@@ -14,7 +14,7 @@ WORKDIR /app/src/GolfClapBot.Runner
 RUN dotnet build -c Release -o out
 
 # Stage 2: Run the application
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build-env /app/src/GolfClapBot.Runner/out .
 ENTRYPOINT ["dotnet", "GolfClapBot.Runner.dll"]
